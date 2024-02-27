@@ -58,7 +58,10 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "cs-check": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+        "cs-fix": "vendor/bin/php-cs-fixer fix -v",
+        "phpstan": "vendor/bin/phpstan analyse --no-progress"
     },
     "conflict": {
         "symfony/symfony": "*"
