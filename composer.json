@@ -12,7 +12,8 @@
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.0.*",
         "symfony/runtime": "7.0.*",
-        "symfony/yaml": "7.0.*"
+        "symfony/yaml": "7.0.*",
+        "tomopongrac/webshop-api": "@dev"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.50",
@@ -71,5 +72,11 @@
             "allow-contrib": false,
             "require": "7.0.*"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../webshop-api"
+        }
+    ]
 }

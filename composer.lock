@@ -2398,6 +2398,52 @@
                 }
             ],
             "time": "2024-01-23T15:02:46+00:00"
+        },
+        {
+            "name": "tomopongrac/webshop-api",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../webshop-api",
+                "reference": "b8283948f4a2d38377de739b8a41e93d21d989e7"
+            },
+            "require": {
+                "php": "^8.2",
+                "symfony/http-kernel": "^7.0",
+                "symfony/orm-pack": "^2.4"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.50",
+                "phpstan/phpstan": "^1.10",
+                "phpstan/phpstan-strict-rules": "^1.5",
+                "phpstan/phpstan-symfony": "^1.3"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "TomoPongrac\\WebshopApiBundle\\": "src/"
+                }
+            },
+            "scripts": {
+                "cs-check": [
+                    "vendor/bin/php-cs-fixer fix --dry-run --diff"
+                ],
+                "cs-fix": [
+                    "vendor/bin/php-cs-fixer fix -v"
+                ],
+                "phpstan": [
+                    "vendor/bin/phpstan analyse --no-progress"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Tomislav Pongrac"
+                }
+            ],
+            "description": "Simple webshop API",
+            "transport-options": {
+                "relative": true
+            }
         }
     ],
     "packages-dev": [
