@@ -9,6 +9,14 @@ DATABASE_URL="mysql://root:@127.0.0.1:3306/webshop"
 ```
 php ./bin/console doctrine:database:create
 ```
+3. Run the migrations
+```
+php ./bin/console doctrine:migrations:migrate
+```
+4. Since application use JWT for authentication, you need to generate public and private keys
+```
+php ./bin/console lexik:jwt:generate-keypair
+```
 
 # How to run static analysis
 1. Run `composer phpstan`
