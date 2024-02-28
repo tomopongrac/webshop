@@ -20,6 +20,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.50",
+        "mtdowling/jmespath.php": "^2.7",
         "phpstan/phpstan": "^1.10",
         "phpstan/phpstan-strict-rules": "^1.5",
         "phpstan/phpstan-symfony": "^1.3",
