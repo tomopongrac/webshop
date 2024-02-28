@@ -31,30 +31,32 @@ class SecurityController extends AbstractController
     ) {
     }
 
-    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
-    #[OA\Post(
-        path: '/api/login',
-        tags: ['Authentication'],
-        description: 'Login a user and return a JWT token'
-    )]
-    #[OA\RequestBody(
-        description: 'User credentials',
-        required: true,
-        content: new Model(type: LoginRequest::class, groups: ['login:request'])
-    )]
-    #[OA\Response(
-        response: 200,
-        description: 'User logged in',
-        content: new Model(type: LoginResponse::class, groups: ['login:response'])
-    )]
-    #[OA\Response(
-        response: 401,
-        description: 'Invalid credentials'
-    )]
-    #[OA\Response(
-        response: 422,
-        description: 'Validation error'
-    )]
+    #[
+        Route('/api/login', name: 'api_login', methods: ['POST']),
+        OA\Post(
+            path: '/api/login',
+            tags: ['Authentication'],
+            description: 'Login a user and return a JWT token'
+        ),
+        OA\RequestBody(
+            description: 'User credentials',
+            required: true,
+            content: new Model(type: LoginRequest::class, groups: ['login:request'])
+        ),
+        OA\Response(
+            response: 200,
+            description: 'User logged in',
+            content: new Model(type: LoginResponse::class, groups: ['login:response'])
+        ),
+        OA\Response(
+            response: 401,
+            description: 'Invalid credentials'
+        ),
+        OA\Response(
+            response: 422,
+            description: 'Validation error'
+        )
+    ]
     public function __invoke(Request $request): Response
     {
         $loginRequest = $this->serializer->deserialize($request->getContent(), LoginRequest::class, 'json', [

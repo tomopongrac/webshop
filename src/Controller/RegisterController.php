@@ -28,25 +28,27 @@ class RegisterController extends AbstractController
     ) {
     }
 
-    #[Route('/api/register', name: 'register', methods: ['POST'])]
-    #[OA\Post(
-        path: '/api/register',
-        tags: ['Authentication'],
-        description: 'Register a new user',
-    )]
-    #[OA\RequestBody(
-        description: 'User data',
-        required: true,
-        content: new Model(type: User::class, groups: ['user:write'])
-    )]
-    #[OA\Response(
-        response: 201,
-        description: 'User created',
-    )]
-    #[OA\Response(
-        response: 422,
-        description: 'Validation error',
-    )]
+    #[
+        Route('/api/register', name: 'register', methods: ['POST']),
+        OA\Post(
+            path: '/api/register',
+            tags: ['Authentication'],
+            description: 'Register a new user',
+        ),
+        OA\RequestBody(
+            description: 'User data',
+            required: true,
+            content: new Model(type: User::class, groups: ['user:write'])
+        ),
+        OA\Response(
+            response: 201,
+            description: 'User created',
+        ),
+        OA\Response(
+            response: 422,
+            description: 'Validation error',
+        )
+    ]
     public function __invoke(Request $request): Response
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json', [

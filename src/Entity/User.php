@@ -11,48 +11,60 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: 'users')]
-#[ORM\HasLifecycleCallbacks]
+#[
+    ORM\Entity(repositoryClass: UserRepository::class),
+    ORM\Table(name: 'users'),
+    ORM\HasLifecycleCallbacks
+]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableTrait;
 
     public const ROLE_USER = 'ROLE_USER';
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    #[Groups(['login:response'])]
+    #[
+        ORM\Id,
+        ORM\GeneratedValue,
+        ORM\Column,
+        Groups(['login:response'])
+    ]
     private ?int $id = null;
 
-    #[ORM\Column(name: 'email', type: Types::STRING, length: 180, unique: true, nullable: false)]
-    #[Groups(['user:write', 'login:response'])]
-    #[Assert\NotBlank()]
-    #[Assert\Email()]
-    #[Assert\Length(max: 180)]
-    #[Assert\Type(Types::STRING)]
+    #[
+        ORM\Column(name: 'email', type: Types::STRING, length: 180, unique: true, nullable: false),
+        Groups(['user:write', 'login:response']),
+        Assert\NotBlank(),
+        Assert\Email(),
+        Assert\Length(max: 180),
+        Assert\Type(Types::STRING)
+    ]
     private string $email;
 
     /**
      * @var list<string> The user roles
      */
-    #[ORM\Column(name: 'roles', type: Types::JSON, nullable: false)]
+    #[
+        ORM\Column(name: 'roles', type: Types::JSON, nullable: false)
+    ]
     private array $roles = [self::ROLE_USER];
 
     /**
      * @var string The hashed password
      */
-    #[ORM\Column(name: 'password', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['user:write'])]
-    #[Assert\NotBlank()]
-    #[Assert\Length(min: 6, max: 255)]
-    #[Assert\Type(Types::STRING)]
+    #[
+        ORM\Column(name: 'password', type: Types::STRING, length: 255, nullable: false),
+        Groups(['user:write']),
+        Assert\NotBlank(),
+        Assert\Length(min: 6, max: 255),
+        Assert\Type(Types::STRING)
+    ]
     private string $password = '';
 
-    #[Groups(['user:write'])]
-    #[Assert\EqualTo(propertyPath: 'password')]
-    #[Assert\NotBlank()]
+    #[
+        Groups(['user:write']),
+        Assert\EqualTo(propertyPath: 'password'),
+        Assert\NotBlank()
+    ]
     private string $passwordConfirmation;
 
     public function getId(): ?int
