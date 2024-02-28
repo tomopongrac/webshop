@@ -16,6 +16,12 @@ doctrine:
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         mappings:
+            WebshopApiBundle:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/vendor/tomopongrac/webshop-api/config/doctrine'
+                prefix: 'TomoPongrac\WebshopApiBundle\Entity'
+                alias: WebshopApiBundle
             App:
                 type: attribute
                 is_bundle: false
