@@ -1,3 +1,15 @@
+# Installation
+
+1. Clone this repository `git clone`
+2. Update DATABASE_URL in .env.local file with your database credentials
+```
+DATABASE_URL="mysql://root:@127.0.0.1:3306/webshop"
+```
+2. Create database with the following command
+```
+php ./bin/console doctrine:database:create
+```
+
 # How to run static analysis
 1. Run `composer phpstan`
 
