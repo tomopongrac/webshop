@@ -18,6 +18,16 @@ php ./bin/console doctrine:migrations:migrate
 php ./bin/console lexik:jwt:generate-keypair
 ```
 
+# Api documentation
+1. Run the application
+```
+symfony serve
+```
+2. Open the following url in your browser
+```
+http://localhost:8000/api/doc
+```
+
 # How to run static analysis
 1. Run `composer phpstan`
 
