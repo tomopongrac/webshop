@@ -23,10 +23,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['login:response'])]
     private ?int $id = null;
 
     #[ORM\Column(name: 'email', type: Types::STRING, length: 180, unique: true, nullable: false)]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write', 'login:response'])]
     #[Assert\NotBlank()]
     #[Assert\Email()]
     #[Assert\Length(max: 180)]
