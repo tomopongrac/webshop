@@ -8,8 +8,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: 'users')]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableTrait;
@@ -22,6 +26,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(name: 'email', type: Types::STRING, length: 180, unique: true, nullable: false)]
+    #[Groups(['user:write'])]
+    #[Assert\NotBlank()]
+    #[Assert\Email()]
+    #[Assert\Length(max: 180)]
+    #[Assert\Type(Types::STRING)]
     private string $email;
 
     /**
@@ -34,7 +43,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column(name: 'password', type: Types::STRING, length: 255, nullable: false)]
+    #[Groups(['user:write'])]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 6, max: 255)]
+    #[Assert\Type(Types::STRING)]
     private string $password = '';
+
+    #[Groups(['user:write'])]
+    #[Assert\EqualTo(propertyPath: 'password')]
+    #[Assert\NotBlank()]
+    private string $passwordConfirmation;
 
     public function getId(): ?int
     {
@@ -96,6 +114,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getPasswordConfirmation(): string
+    {
+        return $this->passwordConfirmation;
+    }
+
+    public function setPasswordConfirmation(string $passwordConfirmation): static
+    {
+        $this->passwordConfirmation = $passwordConfirmation;
 
         return $this;
     }
