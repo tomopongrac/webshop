@@ -15,7 +15,8 @@ class SeedCategoriesCommandTest extends KernelTestCase
 {
     use ResetDatabase, Factories;
 
-    public function testSeedCategoriesCommand(): void
+    /** @test */
+    public function seedCategoriesCommand(): void
     {
         $kernel = self::bootKernel();
         $application = new Application(self::$kernel);
@@ -36,6 +37,6 @@ class SeedCategoriesCommandTest extends KernelTestCase
             ->getRepository(Category::class)
             ->findAll();
 
-        $this->assertEquals(10, count($categories));
+        $this->assertCount(10, $categories);
     }
 }
