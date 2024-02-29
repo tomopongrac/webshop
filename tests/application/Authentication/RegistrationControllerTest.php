@@ -15,7 +15,7 @@ class RegistrationControllerTest extends ApiTestCase
 
     private const ENDPOINT_URL = '/api/register';
 
-    #[Test]
+    /** @test */
     public function userCanRegister(): void
     {
         $json = $this->baseKernelBrowser()
@@ -32,7 +32,7 @@ class RegistrationControllerTest extends ApiTestCase
         $this->assertNotEquals($this->getValidRequestData()['password'], $user->getPassword(), 'The password should be hashed.');
     }
 
-    #[Test]
+    /** @test */
     public function emailIsRequired(): void
     {
         $requestData = $this->getValidRequestData();
@@ -46,7 +46,7 @@ class RegistrationControllerTest extends ApiTestCase
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    #[Test]
+    /** @test */
     public function emailMustBeInValidFormat(): void
     {
         $requestData = [
@@ -63,7 +63,7 @@ class RegistrationControllerTest extends ApiTestCase
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    #[Test]
+    /** @test */
     public function passwordIsRequired(): void
     {
         $requestData = $this->getValidRequestData();
@@ -77,7 +77,7 @@ class RegistrationControllerTest extends ApiTestCase
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    #[Test]
+    /** @test */
     public function passwordConfirmationIsRequired(): void
     {
         $requestData = $this->getValidRequestData();
@@ -91,7 +91,7 @@ class RegistrationControllerTest extends ApiTestCase
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    #[Test]
+    /** @test */
     public function passwordConfirmationMustBeSameAsPassword(): void
     {
         $requestData = $this->getValidRequestData();

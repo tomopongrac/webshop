@@ -17,7 +17,7 @@ class SecurityControllerTest extends ApiTestCase
 
     public const ENDPOINT_URL = '/api/login';
 
-    #[Test]
+    /** @test */
     public function userCanLogin(): void
     {
         $user = UserFactory::createOne([
@@ -40,7 +40,7 @@ class SecurityControllerTest extends ApiTestCase
             ->assertMatches('user.email', 'john.doe@example.com');
     }
 
-    #[Test]
+    /** @test */
     public function userCantLoginWithWrongCredentials(): void
     {
         UserFactory::createOne([
@@ -58,7 +58,7 @@ class SecurityControllerTest extends ApiTestCase
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
-    #[Test]
+    /** @test */
     public function emailIsRequired(): void
     {
         $requestData = [
@@ -73,7 +73,7 @@ class SecurityControllerTest extends ApiTestCase
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    #[Test]
+    /** @test */
     public function passwordIsRequired(): void
     {
         $requestData = [
