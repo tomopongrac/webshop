@@ -102,4 +102,12 @@ class GetProductControllerTest extends ApiTestCase
             ->get(sprintf(self::ENDPOINT_URL, 999))
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
+
+    /** @test */
+    public function throwNotFoundIfProductDontExist(): void
+    {
+        $this->baseKernelBrowser()
+            ->get(sprintf(self::ENDPOINT_URL, 999))
+            ->assertStatus(Response::HTTP_NOT_FOUND);
+    }
 }
