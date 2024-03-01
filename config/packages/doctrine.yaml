@@ -28,6 +28,8 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+        resolve_target_entities:
+            TomoPongrac\WebshopApiBundle\Entity\UserWebShopApiInterface: 'App\Entity\User'
 
 when@test:
     doctrine:
