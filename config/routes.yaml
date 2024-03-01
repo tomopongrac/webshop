@@ -3,3 +3,8 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+webshop_api_bundle:
+    resource: '../vendor/tomopongrac/webshop-api/src/'
+    type: attribute
+    prefix: /api/webshop
