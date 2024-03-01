@@ -8,6 +8,7 @@ use App\Exception\ApiValidationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class ExceptionSubscriber implements EventSubscriberInterface
@@ -31,6 +32,18 @@ class ExceptionSubscriber implements EventSubscriberInterface
                 'status' => 'error',
                 'message' => $exception->getMessage(),
                 'errors' => $exception->getErrors(),
+            ];
+
+            // Customize your response object to display the exception details
+            $response = new JsonResponse($data, $exception->getStatusCode());
+
+            // sends the modified response object to the event
+            $event->setResponse($response);
+        }
+
+        if ($exception instanceof NotFoundHttpException) {
+            $data = [
+                'message' => $exception->getMessage(),
             ];
 
             // Customize your response object to display the exception details

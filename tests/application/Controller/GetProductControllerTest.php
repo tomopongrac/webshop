@@ -94,4 +94,12 @@ class GetProductControllerTest extends ApiTestCase
             ->assertHas('data.categories')
             ->assertMatches('data.categories[0].name', 'Category name');
     }
+
+    /** @test */
+    public function throwNotFoundIfCategoryDontExist(): void
+    {
+        $this->baseKernelBrowser()
+            ->get(sprintf(self::ENDPOINT_URL, 999))
+            ->assertStatus(Response::HTTP_NOT_FOUND);
+    }
 }
