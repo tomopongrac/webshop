@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\application\Authentication;
+namespace App\Tests\application\Controller;
 
 use App\Entity\User;
 use App\Tests\ApiTestCase;
