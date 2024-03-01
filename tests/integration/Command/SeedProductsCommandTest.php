@@ -18,7 +18,7 @@ class SeedProductsCommandTest extends KernelTestCase
     use ResetDatabase, Factories;
 
     /** @test */
-    public function seedCategoriesCommand(): void
+    public function seedProductsCommand(): void
     {
         $kernel = self::bootKernel();
         $application = new Application(self::$kernel);
