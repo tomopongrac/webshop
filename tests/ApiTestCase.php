@@ -22,6 +22,6 @@ class ApiTestCase extends WebTestCase
         $token = $tokenManager->create($user);
 
         return $this->baseKernelBrowser()
-            ->setDefaultHttpOptions(['headers' => ['Authorization' => 'Bearer ' . $tokenManager->create($user)]]);
+            ->setDefaultHttpOptions(['headers' => ['Authorization' => 'Bearer '.$tokenManager->create($user)]]);
     }
 }
