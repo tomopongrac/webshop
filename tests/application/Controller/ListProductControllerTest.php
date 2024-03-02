@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\application\Controller;
 
 use App\Tests\ApiTestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 use TomoPongrac\WebshopApiBundle\Factory\CategoryFactory;
 use TomoPongrac\WebshopApiBundle\Factory\ProductFactory;
