@@ -5854,18 +5854,20 @@
             "dist": {
                 "type": "path",
                 "url": "../webshop-api",
-                "reference": "430249f7e0750da455bd0e777ce3966c947647d1"
+                "reference": "086fddd47d74e2b86423c20cfcc0ac16eceafa1a"
             },
             "require": {
                 "php": "^8.2",
                 "symfony/http-kernel": "^7.0",
-                "symfony/orm-pack": "^2.4"
+                "symfony/orm-pack": "^2.4",
+                "symfony/serializer": "^7.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.50",
                 "phpstan/phpstan": "^1.10",
                 "phpstan/phpstan-strict-rules": "^1.5",
                 "phpstan/phpstan-symfony": "^1.3",
+                "symfony/security-bundle": "^7.0",
                 "zenstruck/foundry": "^1.36"
             },
             "type": "symfony-bundle",
