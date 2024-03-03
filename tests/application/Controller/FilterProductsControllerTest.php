@@ -147,4 +147,74 @@ class FilterProductsControllerTest extends ApiTestCase
             ->assertMatches('total_results', 2)
             ->assertThatEach('data', fn (Json $json) => $json->assertThat('id', fn (Json $json) => $json->isLessThan($wrongProduct->getId())));
     }
+
+    /** @test */
+    public function guestCanFilterProductsByPrices(): void
+    {
+        $taxCategory = TaxCategoryFactory::createOne()->object();
+        $category1 = CategoryFactory::createOne()->object();
+        $category2 = CategoryFactory::createOne()->object();
+        $categoryUnfiltered = CategoryFactory::createOne()->object();
+
+        $product1 = ProductFactory::new(
+            [
+                'name' => 'Product name',
+                'taxCategory' => $taxCategory,
+                'categories' => [$category1],
+                'price' => 1000,
+            ]
+        )->published()->create();
+
+        $product2 = ProductFactory::new(
+            [
+                'name' => 'Product name',
+                'taxCategory' => $taxCategory,
+                'categories' => [$category2],
+                'price' => 2000,
+            ]
+        )->published()->create();
+
+        $wrongProduct = ProductFactory::new(
+            [
+                'name' => 'name',
+                'taxCategory' => $taxCategory,
+                'categories' => [$categoryUnfiltered],
+                'price' => 3000,
+            ]
+        )->published()->create();
+
+        $request = [
+            'filters' => [
+                'name' => '',
+                'categories' => [],
+                'price' => [
+                    'min' => 1500,
+                    'max' => 2500,
+                ],
+            ],
+            'order' => [
+                'by' => 'name',
+                'direction' => 'asc',
+            ],
+            'pagination' => [
+                'page' => 1,
+                'limit' => 10,
+            ],
+        ];
+
+        $json = $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $request,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_OK)
+            ->json();
+
+        $json->assertHas('current_page')
+            ->assertMatches('current_page', 1)
+            ->assertMatches('limit', 10)
+            ->assertMatches('total_pages', 1)
+            ->assertMatches('total_results', 1)
+            ->assertMatches('data[0].id', $product2->getId());
+    }
 }
