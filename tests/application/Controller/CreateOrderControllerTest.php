@@ -72,6 +72,74 @@ class CreateOrderControllerTest extends ApiTestCase
     }
 
     /** @test */
+    public function guestCanCreateOrderWithCorrectTotalAmount(): void
+    {
+        $taxCategory1 = TaxCategoryFactory::createOne(
+            [
+                'name' => 'Tax category name',
+                'rate' => 0.20,
+            ]
+        )->object();
+        $taxCategory2 = TaxCategoryFactory::createOne(
+            [
+                'name' => 'Tax category name',
+                'rate' => 0.10,
+            ]
+        )->object();
+        $category = CategoryFactory::createOne(
+            [
+                'name' => 'Category name',
+            ]
+        )->object();
+
+        $product1 = ProductFactory::new(
+            [
+                'taxCategory' => $taxCategory1,
+                'categories' => [$category],
+                'price' => 1000,
+            ]
+        )->published()->create()->object();
+
+        $product2 = ProductFactory::new(
+            [
+                'taxCategory' => $taxCategory2,
+                'categories' => [$category],
+                'price' => 5000,
+            ]
+        )->published()->create()->object();
+
+        $request = $this->getValidRequestData();
+        $request['products'] = [
+            [
+                'product_id' => $product1->getId(),
+                'quantity' => 2,
+            ],
+            [
+                'product_id' => $product2->getId(),
+                'quantity' => 1,
+            ],
+        ];
+
+        $json = $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $request,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_CREATED)
+            ->json();
+
+        $entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+
+        $profileRepository = $entityManager->getRepository(Profile::class);
+        $profile = $profileRepository->findOneBy(['firstName' => $request['first_name']]);
+
+        $orderRepository = $entityManager->getRepository(Order::class);
+        $order = $orderRepository->findOneBy(['profile' => $profile]);
+        $this->assertCount(2, $order->getProducts());
+        $this->assertEquals(7900, $order->getTotalPrice());
+    }
+
+    /** @test */
     public function guestCanCreateOrderWithPriceFromPriceList(): void
     {
         $taxCategory = TaxCategoryFactory::createOne(
