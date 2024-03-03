@@ -64,4 +64,36 @@ class ListProductsInCategoryControllerTest extends ApiTestCase
             ->assertMatches('total_results', 10)
             ->assertMatches('data[0].name', 'Product name');
     }
+
+    /** @test */
+    public function pageIsRequiredPropertyInQuery(): void
+    {
+        $category = CategoryFactory::createOne(
+            [
+                'name' => 'Good Category name',
+            ]
+        )->object();
+
+        $json = $this->baseKernelBrowser()
+            ->get(sprintf(self::ENDPOINT_URL, $category->getId()).'?limit=10')
+            ->assertJson()
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function limitIsRequiredPropertyInQuery(): void
+    {
+        $category = CategoryFactory::createOne(
+            [
+                'name' => 'Good Category name',
+            ]
+        )->object();
+
+        $json = $this->baseKernelBrowser()
+            ->get(sprintf(self::ENDPOINT_URL, $category->getId()).'?page=1')
+            ->assertJson()
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
 }

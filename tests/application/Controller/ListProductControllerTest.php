@@ -156,4 +156,24 @@ class ListProductControllerTest extends ApiTestCase
             ->assertMatches('data[0].price.amount', '3.01')
         ;
     }
+
+    /** @test */
+    public function pageIsRequiredPropertyInQuery(): void
+    {
+        $json = $this->baseKernelBrowser()
+            ->get(sprintf(self::ENDPOINT_URL).'?limit=10')
+            ->assertJson()
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function limitIsRequiredPropertyInQuery(): void
+    {
+        $json = $this->baseKernelBrowser()
+            ->get(sprintf(self::ENDPOINT_URL).'?page=1')
+            ->assertJson()
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
 }
