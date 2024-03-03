@@ -242,6 +242,261 @@ class CreateOrderControllerTest extends ApiTestCase
         $this->assertEquals(300, $orderProduct->getPrice());
     }
 
+    /** @test */
+    public function emailIsRequired(): void
+    {
+        $requestData = $this->getValidRequestData();
+        unset($requestData['email']);
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function emailNeedsToBeValid(): void
+    {
+        $requestData = $this->getValidRequestData();
+        $requestData['email'] = 'invalid-email';
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function firstNameIsRequired(): void
+    {
+        $requestData = $this->getValidRequestData();
+        unset($requestData['first_name']);
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function lastNameIsRequired(): void
+    {
+        $requestData = $this->getValidRequestData();
+        unset($requestData['last_name']);
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function phoneIsRequired(): void
+    {
+        $requestData = $this->getValidRequestData();
+        unset($requestData['phone']);
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function addressIsRequired(): void
+    {
+        $requestData = $this->getValidRequestData();
+        unset($requestData['address']);
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function cityIsRequired(): void
+    {
+        $requestData = $this->getValidRequestData();
+        unset($requestData['city']);
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function zipIsRequired(): void
+    {
+        $requestData = $this->getValidRequestData();
+        unset($requestData['zip']);
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function countryIsRequired(): void
+    {
+        $requestData = $this->getValidRequestData();
+        unset($requestData['country']);
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function productsIsRequired(): void
+    {
+        $requestData = $this->getValidRequestData();
+        unset($requestData['products']);
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function productsCantBeEmptyArray(): void
+    {
+        $requestData = $this->getValidRequestData();
+        $requestData['products'] = [];
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function productsMustExist(): void
+    {
+        $requestData = $this->getValidRequestData();
+        $requestData['products'] = [
+            [
+                'product_id' => 1,
+                'quantity' => 1,
+            ],
+        ];
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function productsMustBePublished(): void
+    {
+        // Be sure that product exists
+        $taxCategory = TaxCategoryFactory::createOne(
+            [
+                'name' => 'Tax category name',
+                'rate' => 0.22,
+            ]
+        )->object();
+
+        $category = CategoryFactory::createOne(
+            [
+                'name' => 'Category name',
+            ]
+        )->object();
+
+        $product1 = ProductFactory::new(
+            [
+                'taxCategory' => $taxCategory,
+                'categories' => [$category],
+                'price' => 1000,
+            ]
+        )->unpublished()->create()->object();
+
+        $requestData = $this->getValidRequestData();
+        $requestData['products'] = [
+            [
+                'product_id' => 1,
+                'quantity' => 1,
+            ],
+        ];
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function productsQuantityMustBeGreaterThanZero(): void
+    {
+        // Be sure that product exists
+        $taxCategory = TaxCategoryFactory::createOne(
+            [
+                'name' => 'Tax category name',
+                'rate' => 0.22,
+            ]
+        )->object();
+
+        $category = CategoryFactory::createOne(
+            [
+                'name' => 'Category name',
+            ]
+        )->object();
+
+        $product1 = ProductFactory::new(
+            [
+                'taxCategory' => $taxCategory,
+                'categories' => [$category],
+                'price' => 1000,
+            ]
+        )->published()->create()->object();
+
+        $requestData = $this->getValidRequestData();
+        $requestData['products'] = [
+            [
+                'product_id' => 1,
+                'quantity' => 0,
+            ],
+        ];
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
     private function getValidRequestData(): array
     {
         return [
@@ -256,10 +511,6 @@ class CreateOrderControllerTest extends ApiTestCase
             'products' => [
                 [
                     'product_id' => 1,
-                    'quantity' => 1,
-                ],
-                [
-                    'product_id' => 2,
                     'quantity' => 1,
                 ],
             ],
