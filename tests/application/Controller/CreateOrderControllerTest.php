@@ -61,6 +61,7 @@ class CreateOrderControllerTest extends ApiTestCase
         $profileRepository = $entityManager->getRepository(Profile::class);
         $profile = $profileRepository->findOneBy(['firstName' => $this->getValidRequestData()['first_name']]);
         $this->assertNotNull($profile, 'The profile should exist in the database.');
+        $this->assertEquals($this->getValidRequestData()['email'], $profile->getEmail());
 
         $shippingAddressRepository = $entityManager->getRepository(ShippingAddress::class);
         $shippingAddress = $shippingAddressRepository->findOneBy(['address' => $this->getValidRequestData()['address']]);
@@ -255,7 +256,7 @@ class CreateOrderControllerTest extends ApiTestCase
             'products' => [
                 [
                     'product_id' => 1,
-                    'quantity' => 2,
+                    'quantity' => 1,
                 ],
                 [
                     'product_id' => 2,
