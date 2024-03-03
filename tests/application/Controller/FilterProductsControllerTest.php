@@ -414,4 +414,56 @@ class FilterProductsControllerTest extends ApiTestCase
             ->assertMatches('total_results', 2)
             ->assertMatches('data[0].id', $product2->getId());
     }
+
+    /** @test */
+    public function pageIsRequiredProperty(): void
+    {
+        $requestData = [
+            'filters' => [
+                'name' => '',
+                'categories' => [],
+                'price' => [],
+            ],
+            'order' => [
+                'by' => 'price',
+                'direction' => 'desc',
+            ],
+            'pagination' => [
+                'limit' => 10,
+            ],
+        ];
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /** @test */
+    public function limitIsRequiredProperty(): void
+    {
+        $requestData = [
+            'filters' => [
+                'name' => '',
+                'categories' => [],
+                'price' => [],
+            ],
+            'order' => [
+                'by' => 'price',
+                'direction' => 'desc',
+            ],
+            'pagination' => [
+                'page' => 1,
+            ],
+        ];
+
+        $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $requestData,
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
 }
