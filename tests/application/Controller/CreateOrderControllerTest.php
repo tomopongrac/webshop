@@ -5,8 +5,12 @@ namespace App\Tests\application\Controller;
 use App\Tests\ApiTestCase;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
+use TomoPongrac\WebshopApiBundle\Entity\Order;
 use TomoPongrac\WebshopApiBundle\Entity\Profile;
 use TomoPongrac\WebshopApiBundle\Entity\ShippingAddress;
+use TomoPongrac\WebshopApiBundle\Factory\CategoryFactory;
+use TomoPongrac\WebshopApiBundle\Factory\ProductFactory;
+use TomoPongrac\WebshopApiBundle\Factory\TaxCategoryFactory;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -19,6 +23,27 @@ class CreateOrderControllerTest extends ApiTestCase
     /** @test */
     public function guestCanCreateOrder(): void
     {
+        $taxCategory = TaxCategoryFactory::createOne(
+            [
+                'name' => 'Tax category name',
+                'rate' => 0.22,
+            ]
+        )->object();
+        $category = CategoryFactory::createOne(
+            [
+                'name' => 'Category name',
+            ]
+        )->object();
+
+        ProductFactory::new(
+            [
+                'name' => 'Product name',
+                'taxCategory' => $taxCategory,
+                'categories' => [$category],
+                'price' => 1000,
+            ]
+        )->published()->create()->disableAutoRefresh();
+
         $json = $this->baseKernelBrowser()
             ->post(self::ENDPOINT_URL, [
                 'json' => $this->getValidRequestData(),
@@ -36,6 +61,10 @@ class CreateOrderControllerTest extends ApiTestCase
         $shippingAddressRepository = $entityManager->getRepository(ShippingAddress::class);
         $shippingAddress = $shippingAddressRepository->findOneBy(['address' => $this->getValidRequestData()['address']]);
         $this->assertNotNull($shippingAddress, 'The profile should exist in the database.');
+
+        $profileRepository = $entityManager->getRepository(Order::class);
+        $order = $profileRepository->findOneBy(['profile' => $profile]);
+        $this->assertCount(1, $order->getProducts());
     }
 
     private function getValidRequestData(): array
