@@ -2,13 +2,17 @@
 
 namespace App\Tests\application\Controller;
 
+use App\Factory\UserFactory;
 use App\Tests\ApiTestCase;
-use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 use TomoPongrac\WebshopApiBundle\Entity\Order;
+use TomoPongrac\WebshopApiBundle\Entity\OrderProduct;
 use TomoPongrac\WebshopApiBundle\Entity\Profile;
 use TomoPongrac\WebshopApiBundle\Entity\ShippingAddress;
 use TomoPongrac\WebshopApiBundle\Factory\CategoryFactory;
+use TomoPongrac\WebshopApiBundle\Factory\ContractListProductFactory;
+use TomoPongrac\WebshopApiBundle\Factory\PriceListFactory;
+use TomoPongrac\WebshopApiBundle\Factory\PriceListProductFactory;
 use TomoPongrac\WebshopApiBundle\Factory\ProductFactory;
 use TomoPongrac\WebshopApiBundle\Factory\TaxCategoryFactory;
 use Zenstruck\Foundry\Test\Factories;
@@ -65,6 +69,108 @@ class CreateOrderControllerTest extends ApiTestCase
         $profileRepository = $entityManager->getRepository(Order::class);
         $order = $profileRepository->findOneBy(['profile' => $profile]);
         $this->assertCount(1, $order->getProducts());
+    }
+
+    /** @test */
+    public function guestCanCreateOrderWithPriceFromPriceList(): void
+    {
+        $taxCategory = TaxCategoryFactory::createOne(
+            [
+                'name' => 'Tax category name',
+                'rate' => 0.22,
+            ]
+        )->object();
+        $category = CategoryFactory::createOne(
+            [
+                'name' => 'Category name',
+            ]
+        )->object();
+
+        $product = ProductFactory::new(
+            [
+                'name' => 'Product name',
+                'taxCategory' => $taxCategory,
+                'categories' => [$category],
+                'price' => 1000,
+            ]
+        )->published()->create()->object();
+
+        $priceList = PriceListFactory::createOne()->object();
+
+        PriceListProductFactory::createOne([
+            'priceList' => $priceList,
+            'product' => $product,
+            'price' => 500,
+        ]);
+
+        $json = $this->baseKernelBrowser()
+            ->post(self::ENDPOINT_URL, [
+                'json' => $this->getValidRequestData(),
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_CREATED)
+            ->json();
+
+        $entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+
+        $orderProductRepository = $entityManager->getRepository(OrderProduct::class);
+        $orderProduct = $orderProductRepository->findOneBy(['product' => $product]);
+        $this->assertEquals(500, $orderProduct->getPrice());
+    }
+
+    /** @test */
+    public function userCanCreateOrderWithPriceFromContractList(): void
+    {
+        $user = UserFactory::createOne()->object();
+
+        $taxCategory = TaxCategoryFactory::createOne(
+            [
+                'name' => 'Tax category name',
+                'rate' => 0.22,
+            ]
+        )->object();
+        $category = CategoryFactory::createOne(
+            [
+                'name' => 'Category name',
+            ]
+        )->object();
+
+        $product = ProductFactory::new(
+            [
+                'name' => 'Product name',
+                'taxCategory' => $taxCategory,
+                'categories' => [$category],
+                'price' => 1000,
+            ]
+        )->published()->create()->object();
+
+        ContractListProductFactory::createOne([
+            'user' => $user,
+            'product' => $product,
+            'price' => 300,
+        ]);
+
+        $priceList = PriceListFactory::createOne()->object();
+
+        PriceListProductFactory::createOne([
+            'priceList' => $priceList,
+            'product' => $product,
+            'price' => 500,
+        ]);
+
+        $json = $this->authenticateUserInBrowser($user)
+            ->post(self::ENDPOINT_URL, [
+                'json' => $this->getValidRequestData(),
+            ])
+            ->assertJson()
+            ->assertStatus(Response::HTTP_CREATED)
+            ->json();
+
+        $entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+
+        $orderProductRepository = $entityManager->getRepository(OrderProduct::class);
+        $orderProduct = $orderProductRepository->findOneBy(['product' => $product]);
+        $this->assertEquals(300, $orderProduct->getPrice());
     }
 
     private function getValidRequestData(): array
